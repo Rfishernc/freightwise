@@ -1,3 +1,5 @@
+@import '~bootstrap/scss/bootstrap';
+
 .button-container {
   text-align: center;
 }
@@ -19,4 +21,45 @@
 
 .button-container > button:active {
   background-color: #006000;
+}
+
+.newsImg {
+  height: 64px;
+  width: 64px;
+}
+
+.article {
+  margin: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+  border: 1.5px rgba(128, 128, 128, 0.5) inset;
+  background-color: rgba(128, 128, 128, 0.25);
+  width: 70%;
+}
+
+.tempContainer {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#weather-container {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.weatherUnit {
+  margin-right: 20px;
+}
+
+.weatherIcon {
+  height: 128px;
+  width: 128px;
+}
+
+.weatherDescContainer {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
 }

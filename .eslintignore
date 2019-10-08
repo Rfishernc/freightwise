@@ -1,2 +1,6 @@
 node_modules/
 webpack.config.js
+src/tests/test.js
+src/weather/weather.js
+src/geolocate/geolocate.js
+index.js

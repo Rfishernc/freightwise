@@ -1,3 +1,6 @@
+import weather from '../weather/weather';
+import news from '../news/news';
+
 /**
        * Software Developer test.
        *
@@ -40,7 +43,7 @@
 
 
 class Test {
-  constructor() {
+  constructor(coordinates) {
     this.testResults = document.getElementsByClassName('test-results');
   }
 
@@ -48,7 +51,22 @@ class Test {
   run() {
     console.log(new Date().toISOString(), '[Test]', 'Running the test');
 
+    const promiseArray = [weather.getWeather(this.coordinates), news.getNews()];
+    Promise.all(promiseArray)
+      .then((data) => {
+        console.log(data);
+        news.newsBuilder(data[1]);
+        weather.weatherBuilder(data[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     // TODO: Make the API call and handle the results
+  }
+
+  setCoordinates(coords) {
+    this.coordinates = coords;
   }
 
   setError(message) {
