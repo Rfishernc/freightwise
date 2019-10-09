@@ -1,13 +1,13 @@
-import $ from 'jquery';
 import axios from 'axios';
 import apiKeys from '../weather/apiKeys';
 
-const getNews = () => new Promise((resolve, reject) => {
+const getNews = test => new Promise((resolve, reject) => {
   axios.get(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKeys.news}`)
     .then((data) => {
       resolve(data);
     })
     .catch((err) => {
+      test.setError(err);
       reject(err);
     });
 });
@@ -28,11 +28,14 @@ const newsBuilder = (newsData) => {
   const news = newsData.data.articles;
   const domArray = [];
 
+  // eslint-disable-next-line quotes
+  domArray.push(`<h3 class='newsTitle'>Your top news stories</h3>`);
+
   news.forEach((article) => {
     domArray.push(newsItemBuilder(article));
   });
 
-  $('#news-container').append(domArray);
+  return domArray;
 };
 
 export default {

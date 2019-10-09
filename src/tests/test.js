@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import weather from '../weather/weather';
 import news from '../news/news';
 
@@ -44,22 +45,24 @@ import news from '../news/news';
 
 class Test {
   constructor(coordinates) {
-    this.testResults = document.getElementsByClassName('test-results');
+    this.errorResults = document.getElementById('error-container');
+    this.weatherResults = document.getElementById('weather-container');
+    this.newsResults = document.getElementById('news-container');
+    this.weatherMap = document.getElementById('weather-map');
   }
 
   // eslint-disable-next-line class-methods-use-this
   run() {
     console.log(new Date().toISOString(), '[Test]', 'Running the test');
-
-    const promiseArray = [weather.getWeather(this.coordinates), news.getNews()];
+    const promiseArray = [weather.getWeather(this), news.getNews(this), weather.getWeatherMap(this)];
     Promise.all(promiseArray)
       .then((data) => {
-        console.log(data);
-        news.newsBuilder(data[1]);
-        weather.weatherBuilder(data[0]);
+        this.setResults('news', data[1]);
+        this.setResults('weather', data[0]);
+        this.setResults('map', data[2]);
       })
       .catch((err) => {
-        console.log(err);
+        this.setError(err);
       });
 
     // TODO: Make the API call and handle the results
@@ -69,14 +72,25 @@ class Test {
     this.coordinates = coords;
   }
 
-  setError(message) {
+  setError(errorState) {
     // TODO: Format the error
-    this.testResults.innerHTML = (message || '').toString();
+    this.error = errorState;
+    const htmlString = this.error ? `<div class='errorDiv'>
+                          <p class='errorMsg'>${this.error}</p>
+                          <img src='https://media.giphy.com/media/a5MbLFYonqYgg/giphy.gif' class='errorGif' alt='noGif'/>
+                        ` : '';
+    $(this.testResults).html(htmlString);
   }
 
-  setResults(results) {
+  setResults(target, results) {
     // TODO: Format the results
-    this.testResults.innerHTML = (results || '').toString();
+    switch(target) {
+      case 'news' : $(this.newsResults).append(news.newsBuilder(results, this)); break;
+      case 'weather' : $(this.weatherResults).append(weather.weatherBuilder(results, this)); break;
+      case 'map' : $(this.weatherMap).append(weather.mapBuilder(results)); break;
+      
+      default : break;
+    }
   }
 }
 

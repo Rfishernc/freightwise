@@ -1,8 +1,10 @@
 import './index.scss';
 import 'bootstrap';
+import $ from 'jquery';
 import Test from './tests/test';
 import Geolocate from './geolocate/geolocate';
 import weather from './weather/weather';
+import sms from './sms/sms';
 
 /**
        * Creates a button for kicking off the test and adds it to the DOM.
@@ -12,33 +14,30 @@ import weather from './weather/weather';
        * @returns {HTMLElement} the button added to the test
        */
 
-function addButtonForTest(context, test, location) {
-  const testButton = document.createElement('button');
-
-  testButton.type = 'button';
-  testButton.innerText = `Get the ${location} Weather`;
-  testButton.onclick = () => test.run();
-
-  context.appendChild(testButton);
-
-  return testButton;
-}
-
 // Create the Test and add a button to the UI for running the test
 const test = new Test.Test();
 const buttonContainer = document.getElementsByClassName('button-container')[0];
 
+const addButtonForTest = (context, test, location) => {
+  const htmlString = `<button type='button class='btn btn-info' data-toggle="modal" data-target="#phoneModal" id='testBtn'>
+                        Get the ${location} Weather
+                      </button>`;
+
+  context.innerHTML = htmlString;
+};
+
 Geolocate.geolocate()
   .then((coordinates) => {
     test.setCoordinates(coordinates.coords);
-    weather.getWeather(coordinates.coords)
+    weather.getWeather(test)
       .then((data) => {
         addButtonForTest(buttonContainer, test, data.data.name);
+        sms.phoneBuilder(test);
       })
       .catch((err) => {
-        console.log(err);
+        test.setError(err);
       })
   })
   .catch((err) => {
-    console.log(err);
+    test.setError(err);
   });

@@ -5,33 +5,43 @@ import apiKeys from './apiKeys';
 const coordConverter = (lat, long, zoom) => {
   const latRad = lat * Math.PI / 180;
   const n = (2 ** zoom);
-  const xTile = n * ((long + 180) / 360);
-  const yTile = n * (1 - (Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI)) / 2;
+  const xTile = Math.round(n * ((long + 180) / 360));
+  const yTile = Math.round(n * (1 - (Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI)) / 2);
 
   return { xTile, yTile };
 };
 
-const getWeather = coordinates => new Promise((resolve, reject) => {
-  axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=${coordinates.latitude}&lon=${coordinates.longitude}&units=imperial&APPID=${apiKeys.weather}`)
+const getWeather = test => new Promise((resolve, reject) => {
+  axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=${test.coordinates.latitude}&lon=${test.coordinates.longitude}&units=imperial&APPID=${apiKeys.weather}`)
     .then((data) => {
       resolve(data);
     })
     .catch((error) => {
+      test.setError(error);
       reject(error);
     });
 });
 
-const getWeatherMap = coordinates => new Promise((resolve, reject) => {
-  const zoom = 15;
-  const { xTile, yTile } = coordConverter(coordinates.latitude, coordinates.longitude, zoom);
-  axios.get(`https://sat.owm.io/sql/${xTile}/${yTile}/${zoom}/?appid=${apiKeys.owm}&overzoom=true&op=rgb&from=l8&select=b4,b3,b2&order=last`)
-    .then((data) => {
-      resolve(data);
+const getWeatherMap = test => new Promise((resolve, reject) => {
+  const zoom = 7;
+  const { xTile, yTile } = coordConverter(test.coordinates.latitude, test.coordinates.longitude, zoom);
+  const imageUrl = `http://sat.owm.io/sql/${zoom}/${xTile}/${yTile}?from=s2&APPID=${apiKeys.owm}`;
+  axios.get(imageUrl)
+    .then(() => {
+      const layerUrl = `https://tile.openweathermap.org/map/clouds_new/${zoom}/${xTile}/${yTile}.png?appid=${apiKeys.weather}`;
+      console.log(layerUrl);
+      axios.get(layerUrl)
+        .then((data) => {
+          console.log(data);
+          resolve(imageUrl);
+        });
     })
     .catch((error) => {
+      test.setError(error);
       reject(error);
     });
 });
+
 
 const weatherBuilder = (weatherData) => {
   const temperatureData = weatherData.data.main;
@@ -58,11 +68,20 @@ const weatherBuilder = (weatherData) => {
     <p>Wind direction: ${wind.deg} degrees</p>
   </div>`
 
-$('#weather-container').append(htmlString);
+  return htmlString;
+};
+
+const mapBuilder = (mapResponse) => {
+  const htmlString = `<div class='mapDiv'>
+                        <p class='mapTitle'>Sattelite Weather for your area</p>
+                        <img src=${mapResponse} alt='weather map'/>
+                      </div>`
+  return htmlString;
 };
 
 export default {
   getWeather,
   getWeatherMap,
   weatherBuilder,
+  mapBuilder,
 };

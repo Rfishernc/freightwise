@@ -63,3 +63,27 @@
   flex-flow: row wrap;
   align-items: center;
 }
+
+.errorMsg {
+  font-size: 3em;
+  color: red;
+}
+
+.errorDiv {
+  width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mapDiv {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 15px;
+}
+
+.newsTitle {
+  text-align: center;
+}
