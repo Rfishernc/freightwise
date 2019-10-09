@@ -1,0 +1,89 @@
+@import '~bootstrap/scss/bootstrap';
+
+.button-container {
+  text-align: center;
+}
+
+.button-container > button {
+  margin: 0;
+  padding: 10px 18px;
+  color: white;
+  background-color: #008000;
+  border: none;
+  border-radius: 3px;
+  transition: all 200ms ease-in-out;
+  font-size: 14px;
+}
+
+.button-container > button:hover {
+  background-color: #00A000;
+}
+
+.button-container > button:active {
+  background-color: #006000;
+}
+
+.newsImg {
+  height: 64px;
+  width: 64px;
+}
+
+.article {
+  margin: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+  border: 1.5px rgba(128, 128, 128, 0.5) inset;
+  background-color: rgba(128, 128, 128, 0.25);
+  width: 70%;
+}
+
+.tempContainer {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#weather-container {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.weatherUnit {
+  margin-right: 20px;
+}
+
+.weatherIcon {
+  height: 128px;
+  width: 128px;
+}
+
+.weatherDescContainer {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+.errorMsg {
+  font-size: 3em;
+  color: red;
+}
+
+.errorDiv {
+  width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mapDiv {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 15px;
+}
+
+.newsTitle {
+  text-align: center;
+}
