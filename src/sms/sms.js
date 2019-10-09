@@ -1,6 +1,14 @@
 import $ from 'jquery';
 import axios from 'axios';
 
+/* This method is taking the phone number from the input and passing it to my texting api.  
+   This is the entry point to the main site functionality, so the error state is always reset
+   upon running this method. Then the number is run parsed through a formatting method, also
+   checking to see if it was input in a valid format and then if there is no error in the number
+   format, an axios call is made to my texting api with the number.  A successful response
+   will trigger the test to run.
+*/
+
 const getPhoneNumber = (phoneNum, test) => new Promise((resolve, reject) => {
   test.setError(false);
   const formattedNum = phoneFormatter(phoneNum, test);
@@ -9,6 +17,7 @@ const getPhoneNumber = (phoneNum, test) => new Promise((resolve, reject) => {
     .then(() => {
       $('#phoneModal').modal('toggle');
       test.run();
+      resolve();
     })
     .catch((err) => {
       $('#phoneModal').modal('toggle');
@@ -18,6 +27,11 @@ const getPhoneNumber = (phoneNum, test) => new Promise((resolve, reject) => {
     })
   }
 });
+
+/* This is a simple formatting method to convert a number from a 999-999-9999 format to the 19999999999 format used by the 
+    texting api.  I also added some simple form validation to check that the number was input correctly and used the tests
+    setError method to handle the error in the case that it was not.
+*/
 
 const phoneFormatter = (phoneNum, test) => {
   const numArray = phoneNum.split('-');
@@ -34,6 +48,10 @@ const phoneFormatter = (phoneNum, test) => {
     return formattedNum;
   }
 }
+
+/* This method just creates a dom string for the phone input modal, appends it to the body of the DOM and assigns an event handler
+   to the button within the modal.
+*/
 
 const phoneBuilder = (test) => {
   const htmlString = `<div class="modal fade" id="phoneModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

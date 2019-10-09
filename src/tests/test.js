@@ -43,6 +43,14 @@ import news from '../news/news';
        */
 
 
+
+
+/* I replaced the testresults property with properties for each component to give more granularity on 
+  how I was writing to the DOM.  Ideally, this would have been a React component but I decided not to deviate too much
+  from the existing test structure.  I added an additional setCoordinates method to add a coordinates property to the test 
+  for the purposes of geolocation.
+*/
+
 class Test {
   constructor(coordinates) {
     this.errorResults = document.getElementById('error-container');
@@ -51,7 +59,11 @@ class Test {
     this.weatherMap = document.getElementById('weather-map');
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  /* Used promises to manage the axios calls, then passed the results through to the setResults method.  
+    I passed the test object through to the api calling methods in order to allow them to make use of
+    the error handling and coordinates.
+  */
+
   run() {
     console.log(new Date().toISOString(), '[Test]', 'Running the test');
     const promiseArray = [weather.getWeather(this), news.getNews(this), weather.getWeatherMap(this)];
@@ -65,15 +77,18 @@ class Test {
         this.setError(err);
       });
 
-    // TODO: Make the API call and handle the results
   }
 
   setCoordinates(coords) {
     this.coordinates = coords;
   }
 
+  /* I modeled the error handling in a pretty simple manner.  I set an error property on the test which is ascribed
+    an error string by the various methods.  Anytime the test is reinitiated, the error state is reset to false and the DOM 
+    element is unrendered.
+  */
+
   setError(errorState) {
-    // TODO: Format the error
     this.error = errorState;
     const htmlString = this.error ? `<div class='errorDiv'>
                           <p class='errorMsg'>${this.error}</p>
@@ -82,8 +97,10 @@ class Test {
     $(this.testResults).html(htmlString);
   }
 
+  /* Added a target argument to the setResults method so I could reuse the method for each of the components.  
+  */
+
   setResults(target, results) {
-    // TODO: Format the results
     switch(target) {
       case 'news' : $(this.newsResults).append(news.newsBuilder(results, this)); break;
       case 'weather' : $(this.weatherResults).append(weather.weatherBuilder(results, this)); break;

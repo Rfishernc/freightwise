@@ -2,6 +2,12 @@ import $ from 'jquery';
 import axios from 'axios';
 import apiKeys from './apiKeys';
 
+/* This method takes the coordinate values from the geolocation and converts them to the mercator format
+  used by the sattelite imagery.  To be honest I copied the math code from an example I found online and 
+  probably couldn't explain that part.  I rounded the results to a whole number as the vane api
+  would only recognize to a few decimals.
+*/
+
 const coordConverter = (lat, long, zoom) => {
   const latRad = lat * Math.PI / 180;
   const n = (2 ** zoom);
@@ -10,6 +16,9 @@ const coordConverter = (lat, long, zoom) => {
 
   return { xTile, yTile };
 };
+
+/* Used a basic axios get call with a promise to grab the weather data from openweather.  I'm passing in the geolocated coordinates.
+*/
 
 const getWeather = test => new Promise((resolve, reject) => {
   axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=${test.coordinates.latitude}&lon=${test.coordinates.longitude}&units=imperial&APPID=${apiKeys.weather}`)
@@ -21,6 +30,11 @@ const getWeather = test => new Promise((resolve, reject) => {
       reject(error);
     });
 });
+
+/* Used a basic axios get call with a promise to grab the map image from vane.  I'm passing in the geolocated coordinates 
+  and converting to mercator format.  Since the api returns the actual png file, I'm just using the call to confirm access
+  to the resource and then passing the endpoint url along to the DOM builder.
+*/
 
 const getWeatherMap = test => new Promise((resolve, reject) => {
   const zoom = 7;
@@ -42,6 +56,9 @@ const getWeatherMap = test => new Promise((resolve, reject) => {
     });
 });
 
+/* I'm passing in the response from the weather api and then using basic string interpolation to 
+  build out a DOM string.  I'm then returning this string to be accessed by the setResults method in the test.
+*/
 
 const weatherBuilder = (weatherData) => {
   const temperatureData = weatherData.data.main;
@@ -70,6 +87,10 @@ const weatherBuilder = (weatherData) => {
 
   return htmlString;
 };
+
+/* I'm passing in the endpoint url from the map api and then using basic string interpolation to 
+  build out a DOM string.  I'm then returning this string to be accessed by the setResults method in the test.
+*/
 
 const mapBuilder = (mapResponse) => {
   const htmlString = `<div class='mapDiv'>
